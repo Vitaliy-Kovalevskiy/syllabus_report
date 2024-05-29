@@ -12,9 +12,11 @@ $PAGE->set_heading('Силабуси');
 // Виведення заголовка сторінки
 echo $OUTPUT->header();
 
-// Виведення заголовка таблиці
-echo "<div class='container'>";
-echo "<h2>Перелік силабусів</h2>";
+// Додавання поля введення для пошуку
+echo "<div class='search-container'>";
+echo "<input type='text' id='searchInput' onkeyup='searchTable()' placeholder='Пошук за назвою курсу...'>";
+echo "</div>";
+
 echo "<table class='table'>";
 echo "<thead><tr><th>№</th><th>ID курсу</th><th>Повне ім'я курсу</th><th>Факультет</th><th>Посилання</th></tr></thead>";
 echo "<tbody>";
@@ -72,7 +74,7 @@ echo "</div>";
 echo $OUTPUT->footer();
 ?>
 
-<!-- JavaScript для пагінації -->
+<!-- JavaScript для пагінації та пошуку -->
 <script>
     var currentPage = 1;
     var rowsPerPage = 10; // Кількість рядків
@@ -101,6 +103,32 @@ echo $OUTPUT->footer();
         if (currentPage < Math.ceil(tableRows.length / rowsPerPage)) {
             currentPage++;
             showRows();
+        }
+    }
+
+    function searchTable() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.querySelector(".table");
+        tr = table.getElementsByTagName("tr");
+
+        // Показувати стандартну кількість рядків при порожньому полі пошуку
+        if (filter === "") {
+            showRows();
+            return;
+        }
+
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[2]; // Індекс колонки з ім'ям курсу
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
         }
     }
 
